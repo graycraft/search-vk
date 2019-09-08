@@ -8,9 +8,11 @@
 </head>
 <body>
   <noscript>JavaScript is not supported</noscript>
-  <div id="app">Initializing application...</div>
+  <div id="app">Initializing application…</div>
   <script type="text/javascript">
-    VK.init({ apiId: 7127151 });
+    const apiId = new URL(document.location).searchParams.get("vkApiId");
+
+    VK.init({ apiId });
   </script>
 </body>
 </html>

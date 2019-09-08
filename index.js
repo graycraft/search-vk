@@ -1,6 +1,3 @@
-// Polyfill for crossbrowser support of Web Components
-import "@webcomponents/custom-elements";
-// Render markup consistently across browsers
 import "normalize.css";
 
 import "./src/assets/style.css";

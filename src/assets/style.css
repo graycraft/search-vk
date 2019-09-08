@@ -1,4 +1,7 @@
 body {
-  background-color: seashell;
   font-family: monospace;
+  font-size: 13px;
+}
+html {
+  line-height: 1.5;
 }
