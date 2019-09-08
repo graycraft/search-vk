@@ -1,112 +1,164 @@
 import "../components/FieldNumber.js";
-import { AGE } from "../lib/constants.js";
+import "../components/Fieldset.js";
+import { AGE, VKONTAKTE } from "../lib/constants.js";
 
 class VHome extends HTMLElement {
   constructor() {
     super();
 
-    const shadowRoot = this.attachShadow({ mode: "open" });
+    const shadowRoot = this.attachShadow({ mode: "open" }),
+      style = document.createElement("style");
 
-    shadowRoot.appendChild(this.newFormFind);
+    style.textContent = `
+      img {
+        border: 1px white solid;
+        vertical-align: middle;
+      }
+    `;
+    shadowRoot.appendChild(style);
+    shadowRoot.appendChild(this._newFormFind());
   }
-  get newButtonSearch() {
+  _newButtonSearch() {
     const button = document.createElement("button");
 
-    button.addEventListener("click", this.onClickSearch.bind(this));
+    button.addEventListener("click", this._onClickSearch.bind(this));
     button.textContent = "Search";
     button.type = "button";
 
     return button;
   }
-  get newFieldDay() {
+  _newDetailsFound(f) {
+    const details = document.createElement("details");
+
+    this.summaryFound = this._newSummaryFound();
+    details.appendChild(this.summaryFound);
+
+    return details;
+  }
+  _newFieldDay() {
     const field = document.createElement("c-field-number");
 
     field.label = "Day";
     field.max = "31";
-    field.value = "1";
+    field.value = "";
 
     return field;
   }
-  get newFieldMonth() {
+  _newFieldMonth() {
     const field = document.createElement("c-field-number");
 
     field.label = "Month";
     field.max = "12";
-    field.value = "1";
+    field.value = "";
 
     return field;
   }
-  get newFieldYear() {
+  _newFieldYear() {
     const field = document.createElement("c-field-number");
 
     field.label = "Year";
     field.max = this.yearMax;
     field.min = this.yearMin;
-    field.value = this.yearMin;
+    field.value = "";
 
     return field;
   }
-  get newFieldsetFind() {
-    const fieldset = document.createElement("fieldset");
+  _newFieldsetFind() {
+    const fieldset = document.createElement("c-fieldset");
 
-    this.buttonSearch = this.newButtonSearch;
-    this.fieldDay = this.newFieldDay;
-    this.fieldMonth = this.newFieldMonth;
-    this.fieldYear = this.newFieldYear;
-    this.legendFind = this.newLegendFind;
-    fieldset.appendChild(this.legendFind);
-    fieldset.appendChild(this.fieldDay);
-    fieldset.appendChild(this.fieldMonth);
-    fieldset.appendChild(this.fieldYear);
-    fieldset.appendChild(this.buttonSearch);
+    this.buttonSearch = this._newButtonSearch();
+    this.fieldDay = this._newFieldDay();
+    this.fieldMonth = this._newFieldMonth();
+    this.fieldYear = this._newFieldYear();
+    fieldset.legend = "Find people by date of birth";
+    fieldset.nodes = [
+      this.fieldDay,
+      this.fieldMonth,
+      this.fieldYear,
+      this.buttonSearch
+    ];
 
     return fieldset;
   }
-  get newLegendFind() {
-    const legend = document.createElement("legend");
-
-    legend.textContent = "Find people by date of birth";
-
-    return legend;
-  }
-  get newFormFind() {
+  _newFormFind() {
     const form = document.createElement("form");
 
-    this.fieldsetFind = this.newFieldsetFind;
+    this.detailsFound = this._newDetailsFound();
+    this.fieldsetFind = this._newFieldsetFind();
     form.appendChild(this.fieldsetFind);
-    //form.innerHTML = this.template;
+    form.appendChild(this.detailsFound);
 
     return form;
   }
-  get newListFound() {
+  _newListFound(l) {
     const ol = document.createElement("ol");
 
-    this.users.forEach(user => {
-      ol.appendChild(this.newListItem(user));
+    l.forEach(user => {
+      ol.appendChild(this._newListItem(user));
     });
 
     return ol;
   }
-  newListItem(j) {
+  _newListItem(j) {
     const li = document.createElement("li");
 
-    li.textContent = JSON.stringify(j);
+    li.innerHTML = `
+      <img alt="Loading image…" src="${j.photo_50}" />
+      <b>${j.first_name} ${j.middle_name || j.nickname} ${j.last_name ||
+      j.maiden_name}</b>
+      <span>${j.bdate || ""}</span>
+      <a href="https://vk.com/${j.domain}">${j.domain}</a>
+    `;
 
     return li;
   }
-  /*get template() {
-    return `
-      <fieldset>
-        <legend>Find people by date of birth</legend>
-        <c-field-number label="Day" max="31" value="1"></c-field-number>
-        <c-field-number label="Month" max="12" value="1"></c-field-number>
-        <c-field-number label="Year" max="${this.yearMax}" min="${
-      this.yearMin
-    }" value="${this.yearMin}"></c-field-number>
-        <button onclick="onClickSearch()" type="button">Apply</button>
-      </fieldset>
-    `;
-  }*/
+  _newSummaryFound() {
+    const summary = document.createElement("summary");
+
+    summary.textContent = 'Click "Search" to found users';
+
+    return summary;
+  }
+  _onClickSearch(e) {
+    const params = {
+      birth_day: this.fieldDay.value,
+      birth_month: this.fieldMonth.value,
+      birth_year: this.fieldYear.value /* || VK.USER.MIN_YEAR*/,
+      count: VKONTAKTE.USER.MAX_COUNT,
+      fields: VKONTAKTE.USER.SEARCH_FIELDS.join(),
+      v: VKONTAKTE.VERSION
+    };
+
+    try {
+      VK.Api.call("users.search", params, r => {
+        console.dir(r);
+        if (r.response) {
+          const listFound = this._newListFound(r.response.items);
+
+          if (!this.listFound) {
+            this.detailsFound.appendChild(listFound);
+          } else {
+            this.listFound.replaceWith(listFound);
+          }
+          this.summaryFound.textContent = `Found ${
+            r.response.count
+          } users. Click here to see the first ${r.response.items.length}`;
+          this.fieldsetFind.message = "";
+          this.fieldsetFind.state = "valid";
+          this.listFound = listFound;
+        }
+        if (r.error) {
+          this.fieldsetFind.message = `${r.error.error_code}: ${
+            r.error.error_msg
+          }`;
+          this.fieldsetFind.state = "invalid";
+        }
+      });
+    } catch (x) {
+      this.fieldsetFind.message = `${x.name}: ${x.message}`;
+      this.fieldsetFind.state = "invalid";
+    }
+  }
   get yearMax() {
     return String(this.yearNow - AGE.MIN);
   }
@@ -116,23 +168,11 @@ class VHome extends HTMLElement {
   get yearNow() {
     return new Date().getFullYear();
   }
-  onClickSearch(e) {
-    const params = {
-      birth_day: this.fieldDay.value,
-      birth_month: this.fieldMonth.value,
-      birth_year: this.fieldYear.value,
-      fields: "bdate,domain,maiden_name,middle_name,photo_50",
-      v: "5.89"
-    };
-
-    VK.Api.call("users.search", params, r => {
-      console.dir(r);
-      if (r.response) {
-        this.users = r.response.items;
-        this.shadowRoot.appendChild(this.newListFound);
-      }
-    });
-  }
 }
 
-window.customElements.define("v-home", VHome);
+// Catch CodeSandbox `DOMException` bug
+try {
+  customElements.define("v-home", VHome);
+} catch (x) {
+  console.log(x);
+}
