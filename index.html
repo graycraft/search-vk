@@ -12,7 +12,11 @@
   <script type="text/javascript">
     const apiId = new URL(document.location).searchParams.get("vkApiId");
 
-    VK.init({ apiId });
+    try {
+      VK.init({ apiId });
+    } catch (x) {
+      window.alert(`${x.name}: ${x.message}`);
+    }
   </script>
 </body>
 </html>
