@@ -32,6 +32,7 @@ class VHome extends HTMLElement {
 
     this.summaryFound = this._newSummaryFound();
     details.appendChild(this.summaryFound);
+    details.open = true;
 
     return details;
   }
@@ -115,7 +116,7 @@ class VHome extends HTMLElement {
   _newSummaryFound() {
     const summary = document.createElement("summary");
 
-    summary.textContent = 'Click "Search" to found users';
+    summary.textContent = 'Click "Search" to find users';
 
     return summary;
   }
@@ -142,7 +143,9 @@ class VHome extends HTMLElement {
           }
           this.summaryFound.textContent = `Found ${
             r.response.count
-          } users. Click here to see the first ${r.response.items.length}`;
+          } users. Click here to hide/show the first ${
+            r.response.items.length
+          }`;
           this.fieldsetFind.message = "";
           this.fieldsetFind.state = "valid";
           this.listFound = listFound;

@@ -18,6 +18,7 @@ class CFieldset extends HTMLElement {
       }
       fieldset.invalid { background-color: red; }
       fieldset.valid { background-color: green; }
+      legend { background-color: white; }
     `;
     shadowRoot.appendChild(style);
     shadowRoot.appendChild(this._newFieldsetElement());
