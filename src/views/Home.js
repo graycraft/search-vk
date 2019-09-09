@@ -1,6 +1,6 @@
 import "../components/FieldNumber.js";
 import "../components/Fieldset.js";
-import { AGE, VKONTAKTE } from "../lib/constants.js";
+import { VKONTAKTE } from "../lib/constants.js";
 
 class VHome extends HTMLElement {
   constructor() {
@@ -57,8 +57,8 @@ class VHome extends HTMLElement {
     const field = document.createElement("c-field-number");
 
     field.label = "Year";
-    field.max = this.yearMax;
-    field.min = this.yearMin;
+    field.max = this._yearMax;
+    field.min = this._yearMin;
     field.value = "";
 
     return field;
@@ -159,13 +159,13 @@ class VHome extends HTMLElement {
       this.fieldsetFind.state = "invalid";
     }
   }
-  get yearMax() {
-    return String(this.yearNow - AGE.MIN);
+  get _yearMax() {
+    return String(this._yearNow - VKONTAKTE.USER.AGE.MIN);
   }
-  get yearMin() {
-    return String(this.yearNow - AGE.MAX);
+  get _yearMin() {
+    return String(this._yearNow - VKONTAKTE.USER.AGE.MAX);
   }
-  get yearNow() {
+  get _yearNow() {
     return new Date().getFullYear();
   }
 }

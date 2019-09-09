@@ -1,6 +1,6 @@
-export const AGE = { MAX: 40, MIN: 20 };
 export const VKONTAKTE = {
   USER: {
+    AGE: { MAX: 40, MIN: 20 },
     MAX_COUNT: 1e3,
     MIN_YEAR: 1900,
     SEARCH_FIELDS: [
@@ -12,5 +12,5 @@ export const VKONTAKTE = {
       "photo_50"
     ]
   },
-  VERSION: "5.89"
+  VERSION: "5.101"
 };

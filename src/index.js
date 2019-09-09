@@ -1,7 +1,7 @@
 import "normalize.css";
 
-import "./src/assets/style.css";
-import "./src/views/Home.js";
+import "./assets/style.css";
+import "./views/Home.js";
 
 const App = document.getElementById("app"),
   VHome = document.createElement("v-home");
