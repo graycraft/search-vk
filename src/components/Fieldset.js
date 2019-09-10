@@ -56,7 +56,7 @@ class CFieldset extends HTMLElement {
 
     return legend;
   }
-  _validateInput(w, a) {
+  _setFieldsetState(w, a) {
     if (a === "valid") {
       w.parentElement.classList.add(a);
       w.parentElement.classList.remove("invalid");
@@ -87,7 +87,7 @@ class CFieldset extends HTMLElement {
     return this.messageElement.textContent;
   }
   set state(v) {
-    this._validateInput(this.messageElement, v);
+    this._setFieldsetState(this.messageElement, v);
   }
   static get observedAttributes() {
     return ["legend", "message", "nodes", "state"];

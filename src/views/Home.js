@@ -103,10 +103,10 @@ class VHome extends HTMLElement {
   _newListItem(j) {
     const li = document.createElement("li");
 
+    // prettier-ignore
     li.innerHTML = `
       <img alt="Loading image…" src="${j.photo_50}" />
-      <b>${j.first_name} ${j.middle_name || j.nickname} ${j.last_name ||
-      j.maiden_name}</b>
+      <b>${j.first_name} ${j.middle_name || j.nickname} ${j.last_name || j.maiden_name}</b>
       <span>${j.bdate || ""}</span>
       <a href="https://vk.com/${j.domain}">${j.domain}</a>
     `;

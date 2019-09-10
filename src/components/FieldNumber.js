@@ -65,9 +65,9 @@ class CFieldNumber extends HTMLElement {
     return span;
   }
   _onInput(e) {
-    this._validateInput(this.inputElement);
+    this._setLabelState(this.inputElement);
   }
-  _validateInput(w) {
+  _setLabelState(w) {
     if (w.validity.valid) {
       w.parentElement.classList.add("valid");
       w.parentElement.classList.remove("invalid");
@@ -105,7 +105,7 @@ class CFieldNumber extends HTMLElement {
   get validity() {
     this.inputElement.checkValidity();
     this.inputElement.reportValidity();
-    this._validateInput(this.inputElement);
+    this._setLabelState(this.inputElement);
 
     return this.inputElement.validity;
   }

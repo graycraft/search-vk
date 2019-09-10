@@ -3,20 +3,11 @@
 <head>
   <meta charset="utf-8">
   <title>search-vk</title>
-  <script src="//vk.com/js/api/openapi.js" type="text/javascript"></script>
   <script defer src="src/index.js"></script>
 </head>
 <body>
   <noscript>JavaScript is not supported</noscript>
+  <div id="vk_api_transport"></div>
   <div id="app">Initializing application…</div>
-  <script type="text/javascript">
-    const apiId = new URL(document.location).searchParams.get("vkApiId");
-
-    try {
-      VK.init({ apiId });
-    } catch (x) {
-      window.alert(`${x.name}: ${x.message}`);
-    }
-  </script>
 </body>
 </html>
